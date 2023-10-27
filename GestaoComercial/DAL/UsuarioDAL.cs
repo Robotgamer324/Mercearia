@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Threading.Channels;
 using Microsoft.VisualBasic;
+using System.Security.Cryptography;
 
 namespace DAL
 {
@@ -19,8 +20,8 @@ namespace DAL
             try
             {
                 SqlCommand cmd = cn.CreateCommand();
-                cmd.CommandText=@"INSERT INTO Usuario(Nome, NomeUsuario, Senha, Ativo) 
-                                    VALUES(@Nome, @Senha, @Ativo)" ;
+                cmd.CommandText = @"INSERT INTO Usuario(Nome, NomeUsuario, Senha, Ativo) 
+                                    VALUES(@Nome, @Senha, @Ativo)";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
@@ -33,7 +34,7 @@ namespace DAL
 
                 cmd.ExecuteNonQuery();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("Ocorreu erro ao tentar inserir o usuario no banco de dados.", ex);
             }
@@ -41,7 +42,7 @@ namespace DAL
             {
                 cn.Close();
             }
-           
+
         }
         public void Alterar(Usuario _usuario)
         {
@@ -113,10 +114,7 @@ namespace DAL
         public List<Usuario> BuscarTodos()
         {
             SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
-            
-            
-
-            List<Usuario> usuariosList = new List<Usuario>();
+            List<Usuario> usuariosList = new();
             try
             {
 
@@ -126,20 +124,16 @@ namespace DAL
                 cn.Open();
                 using (SqlDataReader rd = cmd.ExecuteReader())
                 {
-                    while(rd.Read()){
-                        Usuario usuario= new Usuario();
-                        usuario.Id = (int)rd["Id"];
-                        usuario.Nome = rd["Nome"].ToString();
-                        usuario.NomeUsuario = rd["NomeUsuario"].ToString();
-                        usuario.Senha = rd["Senha"].ToString();
-                        usuario.Ativo = Convert.ToBoolean(rd["Ativo"]);
+                    while (rd.Read())
+                    {
+                        Usuario usuario = PreecherObjeto(rd);
                         usuariosList.Add(usuario);
 
                     }
                 }
                 return usuariosList;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("Ocorreu erro ao tentar buscar novos usuarios");
             }
@@ -147,9 +141,93 @@ namespace DAL
             {
                 cn.Close();
             }
-            
+
         }
+
+        private static Usuario PreecherObjeto(SqlDataReader rd)
+        {
+            Usuario usuario = new Usuario();
+            usuario.Id = (int)rd["Id"];
+            usuario.Nome = rd["Nome"].ToString();
+            usuario.NomeUsuario = rd["NomeUsuario"].ToString();
+            usuario.Senha = rd["Senha"].ToString();
+            usuario.Ativo = Convert.ToBoolean(rd["Ativo"]);
+            return usuario;
+        }
+
         public Usuario BuscarPorId(int _id)
+        {
+            Usuario usuario;
+            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            try
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = "SELECT Id, Nome, NomeUsuario, Senha, Ativo FROM Usuario Where Id LIKE @Id";
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.Parameters.AddWithValue("@Id",_id+"%");
+                cn.Open();
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    usuario = new Usuario();
+                    while (rd.Read())
+                    {
+
+                        usuario = PreecherObjeto(rd);
+                       
+
+
+                    }
+                }
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu erro ao tentar buscar novos usuarios");
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        public List<Usuario> BuscarPorNome(string _nome)
+        {
+         
+            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            List<Usuario> usuarioList = new List<Usuario>();
+            try
+            {
+
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = "SELECT Id, Nome, NomeUsuario, Senha, Ativo FROM Usuario Where Nome LIKE @Nome";
+                cmd.CommandType = System.Data.CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@Nome", _nome + "%");
+                cn.Open();
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+
+                        Usuario usuario = PreecherObjeto(rd);
+                        usuarioList.Add(usuario);
+                    }
+                }
+                return usuarioList;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu erro ao tentar buscar novos usuarios");
+            }
+            finally
+            {
+                cn.Close();
+            }
+
+
+        }
+
+        public Usuario BuscarPorNomeUsuario(string _nomeUsuario)
         {
             Usuario usuario;
             SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
@@ -157,27 +235,28 @@ namespace DAL
             {
 
                 SqlCommand cmd = cn.CreateCommand();
-                cmd.CommandText = "SELECT Id, Nome, NomeUsuario, Senha, Ativo FROM Usuario Where Id=@Id";
+                cmd.CommandText = "SELECT Id, Nome, NomeUsuario, Senha, Ativo FROM Usuario Where NomeUsuario=@NomeUsuario";
                 cmd.CommandType = System.Data.CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@Id", _id);
+                cmd.Parameters.AddWithValue("@NomeUsuario", _nomeUsuario);
                 cn.Open();
                 using (SqlDataReader rd = cmd.ExecuteReader())
                 {
                     usuario = new Usuario();
                     if (rd.Read())
                     {
-                        
+
                         usuario.Id = (int)rd["Id"];
                         usuario.Nome = rd["Nome"].ToString();
                         usuario.NomeUsuario = rd["NomeUsuario"].ToString();
                         usuario.Senha = rd["Senha"].ToString();
                         usuario.Ativo = Convert.ToBoolean(rd["Ativo"]);
-                        
+
 
                     }
                 }
                 return usuario;
+
             }
             catch (Exception ex)
             {

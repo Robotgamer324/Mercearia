@@ -96,6 +96,123 @@ namespace DAL
                 }
             }
         }
+        public List<Cliente> BuscarTodos()
+        {
+            Cliente cliente;
+            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            List<Cliente> clientelist = new List<Cliente>();
+            try
+            {
+
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = "select Id, Nome,Fone from Cliente";
+                cmd.CommandType = System.Data.CommandType.Text;
+                cn.Open();
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                    { 
+                        cliente = new Cliente
+                        clinete.Id = (int)rd["Id"],
+                        clinete.Nome = rd["Nome"].ToString(),
+                        clinete.Fone = (int)rd["Fone"],
+                        
+                        clientelist.Add(cliente);
+                    }
+                    
+                }
+                            return clientelist;
+                        }
+                catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao tentar buscar os cliente.", ex);
+            }
+            finally
+            {
+                cn.Close();
+            }
+
+
+        }
+
+        public Cliente BuscarPorId(int id)
+        {
+            using (SqlConnection cn = new SqlConnection(Constantes.StringDeConexao))
+            {
+                Cliente cliente;
+                try
+                {
+                    cn.Open();
+
+                    string sql = "select Id, Nome,Fone from Cliente WHERE Id LIKE @Id";
+                    using (SqlCommand cmd = new SqlCommand(sql, cn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        using (SqlDataReader rd = cmd.ExecuteReader())
+                        {
+                            cliente = new Cliente();
+                            while (rd.Read())
+                            {
+                                cliente.Id = (int)rd["Id"];
+                                cliente.Nome = rd["Nome"].ToString();
+                                cliente.Fone = (int)rd["Fone"];
+
+
+                            }
+                        }
+                        return cliente;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Ocorreu um erro ao tentar buscar o produto.", ex);
+                }
+                finally
+                {
+                    cn.Close();
+                }
+                return cliente;
+            }
+        }
+        public List<Cliente> BuscarPorNome(string _nome)
+        {
+
+            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            List<Cliente> clienteList = new List<Cliente>();
+            try
+            {
+
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = "select Id, Nome,Fone from Cliente WHERE Nome LIKE @Nome";
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.Parameters.AddWithValue("@Nome", _nome + "%");
+                cn.Open();
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+                        Cliente cliente = new Cliente();
+                        cliente.Id = (int)rd["Id"];
+                        cliente.Nome = rd["Nome"].ToString();
+                        cliente.Fone = (int)rd["Fone"];
+                        clienteList.Add(cliente);
+
+                    }
+                }
+                return clienteList;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu erro ao tentar buscar novos usuarios");
+            }
+            finally
+            {
+                cn.Close();
+            }
+
+
+
+        }
     }
 
 }

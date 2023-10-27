@@ -9,12 +9,12 @@ namespace Models
 {
     public class Constantes
     {
-        public static string stringDeConexao = @"Data Source=.\SQLEXPRESS2019A;Initial Catalog=Mercearoa;User ID=SA;Password=Senailab02";
+        public static string stringDeConexao = @"Data Source=.\SQLEXPRESS2019A;Initial Catalog=Mercearia;User ID=SA;Password=Senailab02";
         public static string StringDeConexao
         {
             get 
             { 
-                return StringDeConexao; 
+                return stringDeConexao; 
             }
         }
     }
