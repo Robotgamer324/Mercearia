@@ -96,6 +96,7 @@ namespace DAL
                 }
             }
         }
+
         public List<Cliente> BuscarTodos()
         {
             Cliente cliente;
@@ -130,10 +131,12 @@ namespace DAL
             {
                 cn.Close();
             }
+
         }
 
         public Cliente BuscarPorFone(string Fone)
         {
+
             Cliente cliente;
             SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
             try
@@ -146,6 +149,7 @@ namespace DAL
 
                 using (SqlDataReader rd = cmd.ExecuteReader())
                 {
+
                     cliente = new Cliente();
                     while (rd.Read())
                     {
