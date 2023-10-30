@@ -105,25 +105,24 @@ namespace DAL
             {
 
                 SqlCommand cmd = cn.CreateCommand();
-                cmd.CommandText = "select Id, Nome,Fone from Cliente";
+                cmd.CommandText = "select Id,Nome, Fone from Cliente";
                 cmd.CommandType = System.Data.CommandType.Text;
                 cn.Open();
                 using (SqlDataReader rd = cmd.ExecuteReader())
                 {
                     while (rd.Read())
-                    { 
-                        cliente = new Cliente
-                        clinete.Id = (int)rd["Id"],
-                        clinete.Nome = rd["Nome"].ToString(),
-                        clinete.Fone = (int)rd["Fone"],
-                        
+                    {
+                        cliente = new Cliente();
+                        cliente.Id = (int)rd["Id"];
+                        cliente.Nome = rd["Nome"].ToString();
+                        cliente.Fone = rd["Fone"].ToString();
                         clientelist.Add(cliente);
                     }
-                    
+
                 }
-                            return clientelist;
-                        }
-                catch (Exception ex)
+                return clientelist;
+            }
+            catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao tentar buscar os cliente.", ex);
             }
@@ -131,48 +130,43 @@ namespace DAL
             {
                 cn.Close();
             }
-
-
         }
 
-        public Cliente BuscarPorId(int id)
+        public Cliente BuscarPorFone(string Fone)
         {
-            using (SqlConnection cn = new SqlConnection(Constantes.StringDeConexao))
+            Cliente cliente;
+            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            try
             {
-                Cliente cliente;
-                try
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = "select Id, Nome,Fone from Cliente WHERE Fone LIKE @Fone";
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.Parameters.AddWithValue("@Fone", Fone+ "%");
+                cn.Open();
+
+                using (SqlDataReader rd = cmd.ExecuteReader())
                 {
-                    cn.Open();
-
-                    string sql = "select Id, Nome,Fone from Cliente WHERE Id LIKE @Id";
-                    using (SqlCommand cmd = new SqlCommand(sql, cn))
+                    cliente = new Cliente();
+                    while (rd.Read())
                     {
-                        cmd.Parameters.AddWithValue("@Id", id);
-                        using (SqlDataReader rd = cmd.ExecuteReader())
-                        {
-                            cliente = new Cliente();
-                            while (rd.Read())
-                            {
-                                cliente.Id = (int)rd["Id"];
-                                cliente.Nome = rd["Nome"].ToString();
-                                cliente.Fone = (int)rd["Fone"];
-
-
-                            }
-                        }
-                        return cliente;
+                        cliente.Id = (int)rd["Id"];
+                        cliente.Nome = rd["Nome"].ToString();
+                        cliente.Fone = rd["Fone"].ToString();
                     }
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception("Ocorreu um erro ao tentar buscar o produto.", ex);
-                }
-                finally
-                {
-                    cn.Close();
-                }
+
                 return cliente;
+
             }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao tentar buscar o produto.", ex);
+            }
+            finally
+            {
+                cn.Close();
+            }
+
         }
         public List<Cliente> BuscarPorNome(string _nome)
         {
@@ -194,7 +188,7 @@ namespace DAL
                         Cliente cliente = new Cliente();
                         cliente.Id = (int)rd["Id"];
                         cliente.Nome = rd["Nome"].ToString();
-                        cliente.Fone = (int)rd["Fone"];
+                        cliente.Fone = rd["Fone"].ToString();
                         clienteList.Add(cliente);
 
                     }
@@ -210,9 +204,8 @@ namespace DAL
                 cn.Close();
             }
 
-
-
         }
+
     }
 
 }

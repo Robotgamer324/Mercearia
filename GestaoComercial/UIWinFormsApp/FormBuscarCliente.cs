@@ -25,13 +25,18 @@ namespace UIWinFormsApp
                     clienteBindingSource.DataSource = new ClienteBLL().BuscarPorNome(textBoxBuscarPor.Text);
                     break;
                 case 1:
-                    //clienteBindingSource.DataSource = new ClienteBLL().BuscarPorNomeUsuario(textBoxBuscarPor.Text);
+                    clienteBindingSource.DataSource = new ClienteBLL().BuscarPorFone(textBoxBuscarPor.Text);
                     break;
 
                 default:
                     clienteBindingSource.DataSource = new ClienteBLL().BuscarTodos();
                     break;
             }
+        }
+
+        private void textBoxBuscarPor_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
