@@ -29,15 +29,15 @@ namespace BLL
         }
         public List<Cliente> BuscarTodos()
         {
-            new ClienteDAL().BuscarTodos();
+             return new ClienteDAL().BuscarTodos();
         }
-        public Cliente BuscarPorId(int id)
+        public Cliente BuscarPorFone(string _Fone)
         {
-           new ClienteDAL().BuscarPorId(id);
+           return new ClienteDAL().BuscarPorFone(_Fone);
         }
         public List<Cliente> BuscarPorNome(string _nome)
         {
-            new ClienteDAL().BuscarPorNome(_nome);
+             return new ClienteDAL().BuscarPorNome(_nome);
         }
     }
 }
