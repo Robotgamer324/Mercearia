@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Models": {
+      "commandName": "Project"
+    },
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\gabri\\OneDrive\\Documentos\\GIT\\Gabriel\\Mercearia\\GestaoComercial\\UIWinFormsApp\\FormPrincipal.resx"
+    }
+  }
+}
